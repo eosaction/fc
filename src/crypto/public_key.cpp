@@ -26,7 +26,12 @@ namespace fc { namespace crypto {
 
    static public_key::storage_type parse_base58(const std::string& base58str)
    {
-      constexpr auto legacy_prefix = config::public_key_legacy_prefix;
+      // dhlmy
+      char legacy_prefix[5] = {0};
+      strncpy(legacy_prefix, config::public_key_legacy_prefix, 5);
+      if (base58str.substr(0, 3).compare("EOS") == 0) {
+         strncpy(legacy_prefix, "EOS", 5);
+      }
       if(prefix_matches(legacy_prefix, base58str) && base58str.find('_') == std::string::npos ) {
          auto sub_str = base58str.substr(const_strlen(legacy_prefix));
          using default_type = typename public_key::storage_type::template type_at<0>;
